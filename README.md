@@ -25,10 +25,10 @@ Apple Silicon Mac에서 터미널, 파일 권한, Docker, Git을 실습하고 NG
 - [x] 바인드 마운트 수정 반영
 - [x] 볼륨 데이터 영속성 확인
 - [x] Git 사용자 정보 및 main 기본 브랜치 확인
-- [ ] VS Code의 GitHub 로그인 완료 화면 증거
+- [x] VS Code의 GitHub 로그인 완료 화면 증거
 - [x] 보너스: Compose 단일 서비스 up/ps/logs/down
 
-GitHub 업로드 결과는 이 저장소의 커밋과 파일로 확인한다. VS Code에서 과제 폴더를 연 것은 확인했지만 GitHub 로그인 완료 화면은 아직 수집하지 않았다.
+GitHub 업로드 결과는 이 저장소의 커밋과 파일로 확인한다. VS Code에서 `yak7297 (GitHub)` 계정 로그인은 [캡처](docs/screenshots/24-vscode-github-login.png)로 확인했다. 원래 실습 폴더와 업로드에 사용한 작업 복사본은 별도이므로, VS Code에서 제출 저장소 작업 복사본을 열어 원격 연결을 확인하는 단계는 남아 있다.
 
 ## 파일 구성
 
@@ -226,7 +226,7 @@ git config --get init.defaultBranch
 
 [설정 로그](docs/logs/git.txt) · [VS Code 소스 제어 초기 화면](docs/screenshots/23-vscode-source-control.png)
 
-초기 VS Code 화면에서는 아직 로컬 저장소가 없었다. 제출 파일은 별도 작업 복사본에서 정리하여 지정된 GitHub 저장소에 업로드한다. 이 사실만으로 VS Code의 GitHub 로그인 완료를 증명하지는 않는다.
+초기 VS Code 화면에서는 아직 로컬 저장소가 없었다. 제출 파일은 별도 작업 복사본에서 정리하여 지정된 GitHub 저장소에 업로드한다. 이후 계정 메뉴에서 GitHub 로그인을 확인했다: [로그인 증거](docs/screenshots/24-vscode-github-login.png). 원격 연결 확인은 별도 단계다.
 
 ## 트러블슈팅
 
@@ -252,4 +252,4 @@ git config --get init.defaultBranch
 
 ## 증거 및 공개 범위
 
-스크린샷은 실제 사용자 실행 화면이며 로그는 사용자 화면 전사 또는 추가 실제 조회 결과이다. 재현 명령과 실제 결과를 구분했다. 토큰·비밀번호·개인키는 저장하지 않는다. 빈 실습 디렉터리는 Git이 추적하지 않으므로 명령으로 다시 생성한다. 최종 제출 전 남은 VS Code 로그인 증거 및 주소창 캡처 요구를 확인한다.
+스크린샷은 실제 사용자 실행 화면이며 로그는 사용자 화면 전사 또는 추가 실제 조회 결과이다. 재현 명령과 실제 결과를 구분했다. 토큰·비밀번호·개인키는 저장하지 않는다. 빈 실습 디렉터리는 Git이 추적하지 않으므로 명령으로 다시 생성한다. 최종 제출 전 VS Code의 제출 저장소 연결 및 주소창 캡처 요구를 확인한다.
