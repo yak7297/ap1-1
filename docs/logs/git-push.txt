@@ -1,0 +1,5 @@
+$ git push
+To https://github.com/yak7297/ap1-1.git
+   ed5dcce..fdb089a  main -> main
+
+[exit=0]
