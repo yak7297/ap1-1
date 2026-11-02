@@ -1,0 +1,55 @@
+$ docker port dohyeon-web
+80/tcp -> 0.0.0.0:8080
+80/tcp -> [::]:8080
+
+$ docker inspect dohyeon-bind --format '{{json .Mounts}}'
+[{"Type":"bind","Source":"/Users/ryudohyeon/Documents/docker-workstation/site","Destination":"/usr/share/nginx/html","Mode":"ro","RW":false,"Propagation":"rprivate"}]
+
+$ curl -i http://localhost:8080
+HTTP/1.1 200 OK
+Server: nginx/1.31.8
+Date: Mon, 02 Nov 2026 16:23:40 GMT
+Content-Type: text/html
+Content-Length: 287
+Last-Modified: Mon, 02 Nov 2026 16:01:18 GMT
+Connection: keep-alive
+ETag: "6ae8b3ce-11f"
+Accept-Ranges: bytes
+
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>나의 Docker 웹 서버</title>
+</head>
+<body>
+  <h1>나의 개발 워크스테이션</h1>
+  <p>Apple Silicon Mac에서 Docker로 실행한 웹페이지입니다.</p>
+  <p>페이지 버전: 1</p>
+</body>
+</html>
+
+$ curl -i http://localhost:8081
+HTTP/1.1 200 OK
+Server: nginx/1.31.8
+Date: Mon, 02 Nov 2026 16:23:40 GMT
+Content-Type: text/html
+Content-Length: 287
+Last-Modified: Mon, 02 Nov 2026 16:05:26 GMT
+Connection: keep-alive
+ETag: "6ae8b4c6-11f"
+Accept-Ranges: bytes
+
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>나의 Docker 웹 서버</title>
+</head>
+<body>
+  <h1>나의 개발 워크스테이션</h1>
+  <p>Apple Silicon Mac에서 Docker로 실행한 웹페이지입니다.</p>
+  <p>페이지 버전: 2</p>
+</body>
+</html>
+

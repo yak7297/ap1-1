@@ -1,0 +1,16 @@
+$ docker volume inspect workstation-data
+[
+    {
+        "CreatedAt": "2026-11-02T16:06:51Z",
+        "Driver": "local",
+        "Labels": null,
+        "Mountpoint": "/var/lib/docker/volumes/workstation-data/_data",
+        "Name": "workstation-data",
+        "Options": null,
+        "Scope": "local"
+    }
+]
+
+$ docker exec volume-after cat /data/proof.txt
+Volume data survives
+

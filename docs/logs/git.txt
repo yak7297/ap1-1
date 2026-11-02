@@ -1,0 +1,4 @@
+$ git config --list (인증 관련 설정 및 이메일 제외)
+user.name=Dohyeon Ryu
+init.defaultbranch=main
+user.email=[설정 확인, 공개 문서에서 마스킹]
