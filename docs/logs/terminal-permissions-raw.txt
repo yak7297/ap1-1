@@ -1,0 +1,74 @@
+추가 재현 실습: 원래 사용자 실행과 별도 임시 폴더에서 실제 수집한 stdout/stderr
+$ pwd
+/Users/ryudohyeon/Documents/Codex/2026-11-02/x20/work/ap1-terminal-n869ur3o
+[exit=0]
+
+$ mkdir practice
+[exit=0]
+
+$ touch practice/empty.txt
+[exit=0]
+
+$ sh -c 'echo "My terminal practice" > practice/original.txt'
+[exit=0]
+
+$ cat practice/original.txt
+My terminal practice
+[exit=0]
+
+$ cp practice/original.txt practice/copy.txt
+[exit=0]
+
+$ mv practice/copy.txt practice/renamed.txt
+[exit=0]
+
+$ ls -la practice
+total 16
+drwxr-xr-x  5 ryudohyeon  staff  160 Nov  3 01:42 .
+drwx------  3 ryudohyeon  staff   96 Nov  3 01:42 ..
+-rw-r--r--  1 ryudohyeon  staff    0 Nov  3 01:42 empty.txt
+-rw-r--r--  1 ryudohyeon  staff   21 Nov  3 01:42 original.txt
+-rw-r--r--  1 ryudohyeon  staff   21 Nov  3 01:42 renamed.txt
+[exit=0]
+
+$ rm practice/renamed.txt
+[exit=0]
+
+$ ls -la practice
+total 8
+drwxr-xr-x  4 ryudohyeon  staff  128 Nov  3 01:42 .
+drwx------  3 ryudohyeon  staff   96 Nov  3 01:42 ..
+-rw-r--r--  1 ryudohyeon  staff    0 Nov  3 01:42 empty.txt
+-rw-r--r--  1 ryudohyeon  staff   21 Nov  3 01:42 original.txt
+[exit=0]
+
+$ mkdir practice/permission-dir
+[exit=0]
+
+$ ls -ld practice/original.txt practice/permission-dir
+-rw-r--r--  1 ryudohyeon  staff  21 Nov  3 01:42 practice/original.txt
+drwxr-xr-x  2 ryudohyeon  staff  64 Nov  3 01:42 practice/permission-dir
+[exit=0]
+
+$ chmod 600 practice/original.txt
+[exit=0]
+
+$ chmod 700 practice/permission-dir
+[exit=0]
+
+$ ls -ld practice/original.txt practice/permission-dir
+-rw-------  1 ryudohyeon  staff  21 Nov  3 01:42 practice/original.txt
+drwx------  2 ryudohyeon  staff  64 Nov  3 01:42 practice/permission-dir
+[exit=0]
+
+$ chmod 644 practice/original.txt
+[exit=0]
+
+$ chmod 755 practice/permission-dir
+[exit=0]
+
+$ ls -ld practice/original.txt practice/permission-dir
+-rw-r--r--  1 ryudohyeon  staff  21 Nov  3 01:42 practice/original.txt
+drwxr-xr-x  2 ryudohyeon  staff  64 Nov  3 01:42 practice/permission-dir
+[exit=0]
+

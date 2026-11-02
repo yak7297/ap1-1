@@ -1,0 +1,68 @@
+$ docker run -d --name ap1-port-b4cbdeab -p 127.0.0.1:59649:80 nginx:alpine
+ea6655044c97c25a82f44077afce28377951ae9ad4d9e3c205bdf2ec926f8dac
+
+[exit=0]
+
+$ docker port ap1-port-b4cbdeab 80/tcp
+127.0.0.1:59649
+
+[exit=0]
+
+$ docker run -d --name ap1-port-b4cbdeab-conflict -p 127.0.0.1:59649:80 nginx:alpine
+d5e1e3d4377e07fe4a9dc0b75ce858757a47888038010f31b7666852b69d8bb1
+docker: Error response from daemon: failed to set up container networking: driver failed programming external connectivity on endpoint ap1-port-b4cbdeab-conflict (8b54320410f23658d6d4bc499686a864375d9c8f9c70a949cc804b40d41c4ec7): Bind for 127.0.0.1:59649 failed: port is already allocated
+
+Run 'docker run --help' for more information
+
+[exit=125]
+
+$ lsof -nP -iTCP:59649 -sTCP:LISTEN
+COMMAND     PID       USER   FD   TYPE            DEVICE SIZE/OFF NODE NAME
+com.docke 71458 ryudohyeon   98u  IPv4 0x8abf83d8dfff167      0t0  TCP 127.0.0.1:59649 (LISTEN)
+
+[exit=0]
+
+$ docker ps --filter publish=59649 --format '{{.Names}} {{.Ports}}'
+ap1-port-b4cbdeab 127.0.0.1:59649->80/tcp
+
+[exit=0]
+
+$ docker stop ap1-port-b4cbdeab
+ap1-port-b4cbdeab
+
+[exit=0]
+
+$ docker rm ap1-port-b4cbdeab
+ap1-port-b4cbdeab
+
+[exit=0]
+
+$ docker rm -f ap1-port-b4cbdeab-conflict
+ap1-port-b4cbdeab-conflict
+
+[exit=0]
+
+$ docker run -d --name ap1-port-b4cbdeab-recovered -p 127.0.0.1:59649:80 nginx:alpine
+dca47be1c9fd8249ceb11028eb8aa3c44de07c5e97cbe34a408e69fdfa2fa744
+
+[exit=0]
+
+$ curl --retry 3 --retry-connrefused -sS -I http://127.0.0.1:59649
+HTTP/1.1 200 OK
+Server: nginx/1.31.8
+Date: Mon, 02 Nov 2026 16:43:21 GMT
+Content-Type: text/html
+Content-Length: 896
+Last-Modified: Wed, 21 Oct 2026 17:54:45 GMT
+Connection: keep-alive
+ETag: "6ad8fc65-380"
+Accept-Ranges: bytes
+
+
+[exit=0]
+
+$ docker rm -f ap1-port-b4cbdeab-recovered
+ap1-port-b4cbdeab-recovered
+
+[exit=0]
+

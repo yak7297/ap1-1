@@ -253,3 +253,75 @@ git config --get init.defaultBranch
 ## 증거 및 공개 범위
 
 스크린샷은 실제 사용자 실행 화면이며 로그는 사용자 화면 전사 또는 추가 실제 조회 결과이다. 재현 명령과 실제 결과를 구분했다. 토큰·비밀번호·개인키는 저장하지 않는다. 빈 실습 디렉터리는 Git이 추적하지 않으므로 명령으로 다시 생성한다. 주소창에 포트가 표시된 웹 접속 캡처와 VS Code 로그인·원격 연결 증거를 포함했다.
+
+
+## 평가 피드백 보완
+
+아래 추가 로그는 초기 실습 캡처를 재구성한 것이 아니라, 평가 후 별도 테스트 자원으로 실제 재실행해 수집한 명령·stdout·stderr·종료 코드다.
+
+### #9 GitHub 커밋 및 push 증거
+
+- 원격 저장소: https://github.com/yak7297/ap1-1
+- [최초 과제 업로드 커밋 5e13e7d](https://github.com/yak7297/ap1-1/commit/5e13e7dc3f9aa03bff61e7a2d4778614d324fca5)
+- [전체 커밋 이력](https://github.com/yak7297/ap1-1/commits/main/)
+- [평가 보완 git push 실제 출력](docs/logs/git-push.txt)
+
+최초 push는 `main -> main`으로 성공했고 이후 VS Code 로그인·원격 연결·브라우저 포트 캡처를 추가 push했다. 위 커밋 URL로 GitHub에 실제 반영된 파일 변경을 확인할 수 있다.
+
+### #13 네트워크 네임스페이스와 포트 매핑
+
+기본 bridge 네트워크에서 각 컨테이너는 네트워크 네임스페이스로 분리된 인터페이스·IP·라우팅·포트 공간을 사용한다. 컨테이너 안의 localhost는 그 컨테이너 자신을 뜻하며, macOS의 localhost와 같지 않다. 그래서 컨테이너 내부에서 80번으로 서버가 실행된다고 맥의 80번이 자동으로 연결되는 것은 아니다. `-p 8080:80`으로 호스트에서 들어온 연결을 컨테이너 80번으로 전달한다. macOS Docker Desktop에서는 Linux VM 및 Desktop의 호스트 포트 전달 계층을 거친다.
+
+근거: [Docker 네임스페이스](https://docs.docker.com/engine/security/) · [포트 게시](https://docs.docker.com/engine/network/port-publishing/).
+
+### #16 포트 충돌 진단·해제·재접속 실습
+
+[전체 실제 로그](docs/logs/port-conflict.txt)
+
+별도 NGINX 테스트 컨테이너에 명시적인 호스트 포트를 할당한 뒤 두 번째 컨테이너가 같은 IP·포트를 사용하도록 하여 충돌을 재현했다. 실제 사용한 포트·이름·오류는 위 로그에 있다.
+
+```bash
+# PORT와 OWNER는 실제 로그에서 확인한 테스트 포트와 컨테이너명
+lsof -nP -iTCP:$PORT -sTCP:LISTEN
+docker ps --filter publish=$PORT --format '{{.Names}} {{.Ports}}'
+docker stop "$OWNER"
+docker rm "$OWNER"
+# 실패한 테스트 컨테이너도 삭제 후 동일 포트로 새 테스트 컨테이너 실행
+curl -I http://127.0.0.1:$PORT
+```
+
+macOS의 lsof에서 Docker Desktop 백엔드 프로세스가 나타나므로 PID를 무작정 종료하지 않고 docker ps로 소유 컨테이너를 확인했다. 자신이 만든 테스트 컨테이너만 stop/rm하여 포트를 해제하고 같은 포트의 새 컨테이너에 HTTP 200으로 접속했다. 기존 과제 서버는 중지하지 않았다.
+
+### #17 및 #8 볼륨 백업·복원과 데이터 손실 방지
+
+[백업·복원 전체 실제 로그](docs/logs/volume-backup-restore.txt)
+
+원본 `workstation-data`를 읽기 전용으로 연결해 tar.gz 백업을 만들고, **새 빈 볼륨**에 복원했다. 원본과 복원본의 proof.txt 내용, SHA-256, cmp 종료 코드 0을 비교했다. 테스트가 끝나면 테스트용 백업·복원 볼륨만 삭제하며 원본 볼륨은 유지했다.
+
+실제 로그에서는 이름 충돌 방지를 위해 고유한 테스트 볼륨 이름을 사용한다. 아래는 백업 파일을 호스트 폴더에 보관하는 재현 절차다.
+
+```bash
+mkdir -p backups
+docker run --rm -v workstation-data:/source:ro -v "$PWD/backups:/backup" ubuntu:24.04 tar czf /backup/workstation-data.tgz -C /source .
+docker volume create workstation-restored
+docker run --rm -v workstation-restored:/restore -v "$PWD/backups:/backup:ro" ubuntu:24.04 tar xzf /backup/workstation-data.tgz -C /restore
+docker run --rm -v workstation-restored:/restore:ro ubuntu:24.04 cat /restore/proof.txt
+```
+
+이 예시는 정적인 파일을 백업한다. 쓰기 중인 데이터베이스라면 먼저 쓰기를 중지하거나 해당 DB의 일관된 백업 기능을 사용한다. 실제 운영에서는 날짜별 백업을 별도 디스크/원격 저장소에 보관하고 주기적으로 복원 검증한다. 볼륨 자체는 백업이 아니며 volume rm이나 볼륨 삭제 옵션 사용 전 백업을 확인한다.
+
+근거: [Docker 볼륨 백업·복원](https://docs.docker.com/engine/storage/volumes/).
+
+### PASS 항목 추가 보완
+
+- #1·#2: [터미널·권한 변경 원본 텍스트 재실행 로그](docs/logs/terminal-permissions-raw.txt). 별도 임시 폴더에서 수집했다.
+- #3: [Docker 점검 전체 출력](docs/logs/runtime.txt)의 info 구간에서 Client와 Server를 확인한다.
+- #4: [hello-world 재실행 원본 로그](docs/logs/hello-world.txt).
+- #5·#6: [전체 빌드 및 테스트 이미지 삭제 로그](docs/logs/build-full.txt), [테스트 컨테이너 삭제 로그](docs/logs/port-conflict.txt).
+- #7: lsof 진단 및 curl 연결 성공은 [포트 충돌 로그](docs/logs/port-conflict.txt)에 있다. 방화벽 설정을 변경한 것은 아니다.
+- #10: `site/index.html` 작성 → `Dockerfile`로 이미지 빌드 → 직접 run 또는 `compose.yaml`로 실행 → `docs/`의 증거 확인 순이다.
+- #11: Docker Desktop이 실행된 Apple Silicon Mac을 기준으로 수행했다. 베이스 이미지에 실행 호스트 아키텍처 지원이 필요하다. Intel에서도 해당 이미지의 amd64 변형을 사용할 수 있으며 CPU 아키텍처를 강제 지정하지 않는다.
+- #12: 이미지 레이어는 실행 중 변경되지 않고 컨테이너는 별도 쓰기 계층을 갖는다. COPY한 HTML이나 Dockerfile을 바꾸면 새 이미지로 재빌드하고 컨테이너도 다시 만들어야 한다. 바인드 마운트한 파일은 호스트 변경을 바로 읽는다.
+- #14: 바인드 마운트 접근 실패 시 호스트의 파일 읽기·상위 폴더 접근 권한, UID/GID 및 Docker Desktop 파일 공유 허용을 확인한다. `:ro` 연결은 의도적으로 쓰기를 차단하며 무조건 chmod 777로 해결하지 않는다.
+- #15: 특수 권한에는 setuid(실행 시 소유자 권한), setgid(실행 시 그룹 권한/폴더 그룹 상속), sticky(공유 폴더에서 삭제 제한)가 있다. 이번 실습은 일반 r/w/x 비트만 다룬다.
+- #18: 초기 오류의 미회수 캡처를 원본 로그로 주장하지 않는다. 추가 트러블슈팅인 포트 충돌은 문제 → lsof/docker ps 진단 → 해당 컨테이너 중지·삭제 → 동일 포트 HTTP 200 확인을 실제 로그로 제공한다.

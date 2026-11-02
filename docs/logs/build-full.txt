@@ -1,0 +1,44 @@
+$ docker build --progress=plain -t ap1-verification:b4cbdeab .
+#0 building with "desktop-linux" instance using docker driver
+
+#1 [internal] load build definition from Dockerfile
+#1 transferring dockerfile: 158B done
+#1 DONE 0.0s
+
+#2 [internal] load metadata for docker.io/library/nginx:alpine
+#2 DONE 0.1s
+
+#3 [internal] load .dockerignore
+#3 transferring context: 79B done
+#3 DONE 0.0s
+
+#4 [internal] load build context
+#4 transferring context: 359B done
+#4 DONE 0.0s
+
+#5 [1/2] FROM docker.io/library/nginx:alpine@sha256:785835ea65db4bba6f021acc0f3be91b0fef76a53fe41f8588c6698d2aed0606
+#5 resolve docker.io/library/nginx:alpine@sha256:785835ea65db4bba6f021acc0f3be91b0fef76a53fe41f8588c6698d2aed0606 done
+#5 DONE 0.0s
+
+#6 [2/2] COPY site/ /usr/share/nginx/html/
+#6 CACHED
+
+#7 exporting to image
+#7 exporting layers done
+#7 exporting manifest sha256:b329aca2f00396f117dcc341a2e7711ecc19d570bd9ef5b46e21532bb04b18fa done
+#7 exporting config sha256:daf60dfad4b0ed5c075d8962f73cc7a17f972f50506a4cc8a9011de7fc4f144f done
+#7 exporting attestation manifest sha256:1c6049d7e65e5220cd8f8c7815eda2f3f3607d4e0233ecf9f4acc9edfed85429 done
+#7 exporting manifest list sha256:52b060e422fbdf6eeaeca45dda85769ee98b54fb2009a0c9b1ab524f67fcdd35
+#7 exporting manifest list sha256:52b060e422fbdf6eeaeca45dda85769ee98b54fb2009a0c9b1ab524f67fcdd35 done
+#7 naming to docker.io/library/ap1-verification:b4cbdeab done
+#7 unpacking to docker.io/library/ap1-verification:b4cbdeab done
+#7 DONE 0.0s
+
+[exit=0]
+
+$ docker image rm ap1-verification:b4cbdeab
+Untagged: ap1-verification:b4cbdeab
+Deleted: sha256:52b060e422fbdf6eeaeca45dda85769ee98b54fb2009a0c9b1ab524f67fcdd35
+
+[exit=0]
+

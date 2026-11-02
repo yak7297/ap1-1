@@ -1,0 +1,41 @@
+$ docker volume create ap1-backup-b4cbdeab
+ap1-backup-b4cbdeab
+
+[exit=0]
+
+$ docker volume create ap1-restored-b4cbdeab
+ap1-restored-b4cbdeab
+
+[exit=0]
+
+$ docker run --rm -v workstation-data:/source:ro -v ap1-backup-b4cbdeab:/backup ubuntu:24.04 tar czf /backup/workstation-data.tgz -C /source .
+
+[exit=0]
+
+$ docker run --rm -v ap1-backup-b4cbdeab:/backup:ro ubuntu:24.04 tar tzf /backup/workstation-data.tgz
+./
+./proof.txt
+
+[exit=0]
+
+$ docker run --rm -v ap1-restored-b4cbdeab:/restore -v ap1-backup-b4cbdeab:/backup:ro ubuntu:24.04 tar xzf /backup/workstation-data.tgz -C /restore
+
+[exit=0]
+
+$ docker run --rm -v workstation-data:/source:ro -v ap1-restored-b4cbdeab:/restore:ro ubuntu:24.04 bash -c 'cat /restore/proof.txt && sha256sum /source/proof.txt /restore/proof.txt && cmp /source/proof.txt /restore/proof.txt'
+Volume data survives
+2020cf5c1d46af5e8569bffad05c398c6da1bf9c4223f632bac22d6ed1df7bb2  /source/proof.txt
+2020cf5c1d46af5e8569bffad05c398c6da1bf9c4223f632bac22d6ed1df7bb2  /restore/proof.txt
+
+[exit=0]
+
+$ docker volume rm ap1-backup-b4cbdeab
+ap1-backup-b4cbdeab
+
+[exit=0]
+
+$ docker volume rm ap1-restored-b4cbdeab
+ap1-restored-b4cbdeab
+
+[exit=0]
+
